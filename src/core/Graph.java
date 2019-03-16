@@ -2,6 +2,7 @@ package core;
 
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.Vector;
 
 public class Graph {
     public static final int uiRadius = 20;//顶点半径
@@ -19,16 +20,16 @@ public class Graph {
     }
 
 
-    public static String generateGraph() {
+    public static String generateGraph(boolean weighted) {
         StringBuffer sb = new StringBuffer(vertices.size()+ " " + edges.size() + "\n");
         for (Edge e:edges) {
-            sb.append(e.vs.inx + " " + e.ve.inx + " " + e.weight + "\n");
+            sb.append(e.vs.inx + " " + e.ve.inx + ((weighted)?" " + e.weight:"") + "\n");
         }
         return sb.toString();
     }
 
     //二叉树搜索
-    //method=3表示先序，=4表示中序，=5表示后序
+    //method=0表示先序，=1表示中序，=2表示后序
     private static StringBuffer enumAns;
     public static String binaryEnumGraph(int root, int method) {
         enumAns = new StringBuffer(vertices.size() + "\n");
@@ -60,17 +61,17 @@ public class Graph {
         }
 
         switch (method){
-            case 3:
+            case 0:
                 enumAns.append(v.inx+" ");
                 enum_dfs(v1, method);
                 enum_dfs(v2, method);
                 break;
-            case 4:
+            case 1:
                 enum_dfs(v1, method);
                 enumAns.append(v.inx+" ");
                 enum_dfs(v2, method);
                 break;
-            case 5:
+            case 2:
                 enum_dfs(v1, method);
                 enum_dfs(v2, method);
                 enumAns.append(v.inx+" ");

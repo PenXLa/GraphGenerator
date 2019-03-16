@@ -33,7 +33,8 @@ public class MainWindow extends JFrame {
 
         toolbox.add(new JLabel("数据格式："));
         JComboBox dataStyle = new JComboBox();
-        dataStyle.addItem("按边生成");
+        dataStyle.addItem("按边生成(带权)");
+        dataStyle.addItem("按边生成(无权)");
         dataStyle.addItem("DFS");
         dataStyle.addItem("BFS");
         dataStyle.addItem("(二叉树)先序遍历");
@@ -49,17 +50,17 @@ public class MainWindow extends JFrame {
             public void actionPerformed(ActionEvent actionEvent) {
                 Clipboard clip = Toolkit.getDefaultToolkit().getSystemClipboard();
                 String res="";
-                if (dataStyle.getSelectedIndex()==0) {
-                    res = Graph.generateGraph();
+                if (dataStyle.getSelectedIndex()==0 || dataStyle.getSelectedIndex()==1) {
+                    res = Graph.generateGraph(dataStyle.getSelectedIndex()==0);
                 } else {
-                    int root = Integer.parseInt(JOptionPane.showInputDialog(null, "输入根节点"));
+                    int root = Integer.parseInt(JOptionPane.showInputDialog(null, "输入根节点", (Graph.selected!=null && Graph.selected instanceof Vertex)?((Vertex)Graph.selected).inx+"":""));
 
                     if (dataStyle.getSelectedIndex()==1) {
                         res = "暂不支持";
                     } else if (dataStyle.getSelectedIndex()==2) {
                         res = Graph.BFS(root);
                     } else {
-                        res = Graph.binaryEnumGraph(root, dataStyle.getSelectedIndex());
+                        res = Graph.binaryEnumGraph(root, dataStyle.getSelectedIndex()-4);
                     }
                 }
                 Transferable tText = new StringSelection(res);
