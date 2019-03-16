@@ -6,12 +6,15 @@ import core.GraphComponent;
 import core.Vertex;
 
 import javax.swing.*;
+import javax.swing.event.MenuEvent;
+import javax.swing.event.MenuListener;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
 import java.awt.event.*;
 import java.util.Iterator;
+import java.util.Random;
 
 public class MainWindow extends JFrame {
     public DrawingPanel drawingArea = new DrawingPanel();
@@ -56,7 +59,7 @@ public class MainWindow extends JFrame {
                     int root = Integer.parseInt(JOptionPane.showInputDialog(null, "输入根节点", (Graph.selected!=null && Graph.selected instanceof Vertex)?((Vertex)Graph.selected).inx+"":""));
 
                     if (dataStyle.getSelectedIndex()==1) {
-                        res = "暂不支持";
+                        res = "暂不支持(主要是懒";
                     } else if (dataStyle.getSelectedIndex()==2) {
                         res = Graph.BFS(root);
                     } else {
@@ -89,22 +92,63 @@ public class MainWindow extends JFrame {
         toolbox.add(clear);
 
 
-        JButton help = new JButton("帮助");
-        help.addActionListener(new ActionListener() {
+
+
+        JMenuBar menuBar = new JMenuBar();
+        JMenu moreFunc = new JMenu("更多功能");
+        menuBar.add(moreFunc);
+
+        //随机生成图
+        JMenuItem randomGraph = new JMenuItem("随机生成图");
+        randomGraph.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                JOptionPane.showMessageDialog(null, "添加顶点：\t左键单击空白\n\n" +
-                                                                "添加边：左键拖动顶点\n\n" +
-                                                                "删除：\t选中，然后按下删除按钮\n\n" +
-                                                                "移动顶点：\t右键拖动顶点\n\n" +
-                                                                "修改权值/编号:\t双击\n\n" +
-                                                                "测试数据的格式：\n" +
-                                                                "顶点数 边数\n" +
-                                                                "出发点 目标点 权值\n\n点击生成测试数据后结果保存在剪贴板中      \n\n\n\n\n" +
-                                                                "程序由PXL制作","帮助", JOptionPane.INFORMATION_MESSAGE);
+                int vscale = Integer.parseInt(JOptionPane.showInputDialog(null, "输入顶点数", "10"));
+                int escale = Integer.parseInt(JOptionPane.showInputDialog(null, "输入边数", "15"));
+
+                Random ra = new Random();
+                for (int i=0; i<vscale; ++i) Graph.vertices.add(new Vertex(ra.nextInt(drawingArea.getWidth()-2*Graph.uiRadius)+Graph.uiRadius, ra.nextInt(drawingArea.getHeight()-2*Graph.uiRadius)+Graph.uiRadius, Graph.vertices.size()));
+
+                for(int i=0; i<escale; ) {
+                    Vertex sv = Graph.vertices.get(ra.nextInt(Graph.vertices.size()));
+                    Vertex ev = Graph.vertices.get(ra.nextInt(Graph.vertices.size()));
+                    boolean flag = false;
+                    for (Edge edge:Graph.edges) {
+                        if (edge.vs==sv && edge.ve==ev) {//防止重复
+                            flag = true;
+                            break;
+                        }
+                    }
+                    if (!flag) {
+                        Graph.edges.add(new Edge(sv,ev,1));
+                        ++i;
+                    }
+                }
+
+                drawingArea.updateUI();
             }
         });
-        toolbox.add(help);
+        moreFunc.add(randomGraph);
+
+        //帮助
+        JMenu menuHelp = new JMenu("帮助");
+        menuBar.add(menuHelp);
+        menuHelp.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent mouseEvent) {
+                JOptionPane.showMessageDialog(null, "添加顶点：\t左键单击空白\n\n" +
+                        "添加边：左键拖动顶点\n\n" +
+                        "删除：\t选中，然后按下删除按钮\n\n" +
+                        "移动顶点：\t右键拖动顶点\n\n" +
+                        "修改权值/编号:\t双击\n\n" +
+                        "测试数据的格式：\n" +
+                        "顶点数 边数\n" +
+                        "出发点 目标点 权值\n\n点击生成测试数据后结果保存在剪贴板中      \n\n\n\n\n" +
+                        "程序由PXL制作","帮助", JOptionPane.INFORMATION_MESSAGE);
+            }
+        });
+
+        this.setJMenuBar(menuBar);
     }
 
     public static void main(String[] args) {
