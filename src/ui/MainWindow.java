@@ -452,17 +452,30 @@ class DAKey extends KeyAdapter {
             if (Graph.selected instanceof Edge) {
                 Graph.edges.remove(Graph.selected);
             } else {
-
-                Iterator<Edge> iter = Graph.edges.iterator();
-                while (iter.hasNext()) {
-                    Edge e = iter.next();
-                    if (e.vs==Graph.selected || e.ve==Graph.selected) {
-                        iter.remove();
-                    }
-                }
+                removeE((Vertex) Graph.selected);
                 Graph.vertices.remove(Graph.selected);
             }
-            da.updateUI();
+        }
+
+        Iterator<Vertex> iter = Graph.vertices.iterator();
+        while (iter.hasNext())  {
+            Vertex v = iter.next();
+            if (v.selected) {
+                removeE(v);
+                iter.remove();
+            }
+        }
+
+        da.updateUI();
+    }
+
+    private void removeE(Vertex v) {
+        Iterator<Edge> iter = Graph.edges.iterator();
+        while (iter.hasNext()) {
+            Edge e = iter.next();
+            if (e.vs==v || e.ve==v) {
+                iter.remove();
+            }
         }
     }
 
