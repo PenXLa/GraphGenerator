@@ -303,7 +303,7 @@ class DAMouseListener implements MouseListener, MouseMotionListener {
         if (e.getButton()==1) {
             Graph.clearSelection();//先取消选择
             if (gc==null) {
-                Graph.vertices.add(new Vertex(e.getX(), e.getY(), Graph.vertices.size()));
+                Graph.vertices.add(new Vertex(e.getX(), e.getY(), Graph.vertices.isEmpty()?0:Graph.vertices.getLast().inx+1));
                 da.updateUI();
             } else {
                 if (v!=null) {
