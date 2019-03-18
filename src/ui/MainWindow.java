@@ -18,7 +18,7 @@ public class MainWindow extends JFrame {
     public DrawingPanel drawingArea = new DrawingPanel();
 
     public MainWindow() {
-        this.setTitle("Graph Test Data Generator        --Powered By PXL");
+        this.setTitle("Graph Test Data Generator ver1.2        --Powered By PXL");
         this.setLayout(new BorderLayout());
         this.add(drawingArea);
 
@@ -137,9 +137,10 @@ public class MainWindow extends JFrame {
                 JOptionPane.showMessageDialog(null, "添加顶点：\t左键单击空白\n\n" +
                         "添加边：左键拖动顶点\n\n" +
                         "删除：\t选中，然后按下删除按钮\n\n" +
+                        "选中多个顶点：\t右键圈中要选的顶点\n\n" +
                         "移动顶点：\t右键拖动顶点\n\n" +
                         "修改权值/编号:\t双击\n\n" +
-                        "测试数据的格式：\n" +
+                        "按边输出的测试数据的格式：\n" +
                         "顶点数 边数\n" +
                         "出发点 目标点 权值\n\n点击生成测试数据后结果保存在剪贴板中      \n\n\n\n\n" +
                         "程序由PXL制作","帮助", JOptionPane.INFORMATION_MESSAGE);
