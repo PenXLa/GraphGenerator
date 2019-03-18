@@ -4,6 +4,7 @@ public class Vertex implements GraphComponent {
     public int ui_x, ui_y;
     public String name;
     public int inx;
+    public boolean selected = false;
 
     public Vertex(){}
 

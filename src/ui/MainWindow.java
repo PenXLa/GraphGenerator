@@ -6,8 +6,6 @@ import core.GraphComponent;
 import core.Vertex;
 
 import javax.swing.*;
-import javax.swing.event.MenuEvent;
-import javax.swing.event.MenuListener;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
@@ -234,14 +232,16 @@ class DrawingPanel extends JPanel {
             g2d.drawString(e.weight+"", (e.vs.ui_x+e.ve.ui_x)/2, (e.vs.ui_y+e.ve.ui_y)/2);
         }
 
-
         //画预览边
         g2d.setColor(Color.BLACK);
         if (Graph.ui_hasNewEdge) g2d.drawLine(Graph.ui_newEdgeHeadV.ui_x, Graph.ui_newEdgeHeadV.ui_y, Graph.ui_newEdgeX, Graph.ui_newEdgeY);
 
         //画顶点
         for (Vertex v: Graph.vertices) {
-            g2d.setColor((v==Graph.selected)?Color.ORANGE:Color.WHITE);
+            if (v.selected) g2d.setColor(new Color(0,162,232));
+            else if (v==Graph.selected) g2d.setColor(Color.ORANGE);
+            else g2d.setColor(Color.WHITE);
+
             g2d.fillOval(v.ui_x - Graph.uiRadius, v.ui_y - Graph.uiRadius, Graph.uiRadius * 2, Graph.uiRadius * 2);
 
             g2d.setColor(Color.BLACK);
@@ -249,6 +249,12 @@ class DrawingPanel extends JPanel {
 
             drawStr(v.inx+"", v.ui_x, v.ui_y, g2d);
 
+        }
+
+        //画多边形选区
+        if (Graph.polygonSelection.npoints!=0) {
+            g2d.setStroke(new BasicStroke(1f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND, 3.5f, new float[] { 3, 3}, 0f));
+            g2d.drawPolygon(Graph.polygonSelection);
         }
     }
 
@@ -259,6 +265,9 @@ class DrawingPanel extends JPanel {
         int h = fm.getHeight();
         g2d.drawString(str,x - w/2, y+h/4);
     }
+
+
+
 }
 
 
@@ -277,20 +286,7 @@ class DAMouseListener implements MouseListener, MouseMotionListener {
         this.da = da;
     }
 
-    @Override
-    public void mouseDragged(MouseEvent e) {
-        if (v!=null) {
-            if (button == MouseEvent.BUTTON1){
-                Graph.ui_hasNewEdge = true;
-                Graph.ui_newEdgeX = e.getX();
-                Graph.ui_newEdgeY = e.getY();
-            } else {
-                v.ui_x = e.getX();
-                v.ui_y = e.getY();
-            }
-            da.updateUI();
-        }
-    }
+
 
     @Override
     public void mousePressed(MouseEvent e) {
@@ -304,6 +300,7 @@ class DAMouseListener implements MouseListener, MouseMotionListener {
         else edge=null;//不是就把边设为null
 
         if (e.getButton()==1) {
+            Graph.clearSelection();//先取消选择
             if (gc==null) {
                 Graph.vertices.add(new Vertex(e.getX(), e.getY(), Graph.vertices.size()));
                 da.updateUI();
@@ -315,6 +312,44 @@ class DAMouseListener implements MouseListener, MouseMotionListener {
                 if (edge!=null) {
                     Graph.selected = edge;
                 }
+            }
+        } else if (e.getButton()==3) {//3是右键....
+            if (gc==null) {
+                //右键点击空白
+                Graph.polygonSelection.addPoint(e.getX(), e.getY());
+            }
+        }
+    }
+
+    @Override
+    public void mouseDragged(MouseEvent e) {
+        if (v!=null) {
+            if (button == MouseEvent.BUTTON1){
+                Graph.ui_hasNewEdge = true;
+                Graph.ui_newEdgeX = e.getX();
+                Graph.ui_newEdgeY = e.getY();
+            } else {
+                if (v.selected) {
+                    //是选中群组中的一个
+                    int dx = e.getX() - v.ui_x, dy = e.getY()-v.ui_y;
+                    for (Vertex v2:Graph.vertices) {
+                        if (v2.selected) {
+                            v2.ui_x += dx;
+                            v2.ui_y += dy;
+                        }
+                    }
+                } else {
+                    //不是选中群组中的一个
+                    v.ui_x = e.getX();
+                    v.ui_y = e.getY();
+                }
+            }
+            da.updateUI();
+        } else {
+            if (button == MouseEvent.BUTTON3) {//3是右键....
+                //右键拖动空白
+                Graph.polygonSelection.addPoint(e.getX(), e.getY());//更新多边形选区
+                da.updateUI();
             }
         }
     }
@@ -334,8 +369,32 @@ class DAMouseListener implements MouseListener, MouseMotionListener {
             if (!flag && v!=gc) Graph.edges.add(new Edge(v, (Vertex)gc, 1));
         }
         Graph.ui_hasNewEdge = false;
+
+        if (e.getButton() == 3) {//3是右键....
+            if (Graph.polygonSelection.npoints!=0) {//有选区
+                Graph.clearSelection();
+                //右键放开选区
+                for (Vertex v: Graph.vertices)
+                    if (Graph.polygonSelection.contains(v.ui_x, v.ui_y)) v.selected = true;
+
+                Graph.polygonSelection.reset();
+            }
+        }
+
         da.updateUI();
     }
+
+//    //点与多边形的碰撞检测(ps里相邻的点组成一条多边形的边)
+//    //使用Ray casting algorithm
+    //后来发现。。java的polygon类自带碰撞检测。。。。。
+//    private boolean pip(int x, int y, ArrayList<Point> ps) {
+//        Point lastP = ps.get(0);
+//        int cnt = 0;
+//        for (int i=1; i<ps.size(); ++i)
+//            if ((lastP.x<0)^(ps.get(i).x<0)) ++cnt;
+//
+//        return cnt%2!=0;
+//    }
 
     @Override
     public void mouseMoved(MouseEvent mouseEvent) {

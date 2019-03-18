@@ -1,17 +1,18 @@
 package core;
 
+import java.awt.*;
 import java.util.LinkedList;
 import java.util.Queue;
-import java.util.Vector;
 
 public class Graph {
     public static final int uiRadius = 20;//顶点半径
     public static Vertex ui_newEdgeHeadV;
     public static int ui_newEdgeX;//用于画新边的预览
     public static int ui_newEdgeY;//用于画新边的预览
+    public static Polygon polygonSelection = new Polygon();//用于选区多边形
     public static boolean ui_hasNewEdge = false;//用于画新边的预览
-    public static GraphComponent selected;
-    public static LinkedList<Vertex> vertices = new LinkedList<Vertex>();
+    public static GraphComponent selected;//被单选中的组件，vertex类中的selected仅用于多选(其实保留这个主要还是懒，不想大改代码233333)
+   public static LinkedList<Vertex> vertices = new LinkedList<Vertex>();
     public static LinkedList<Edge> edges = new LinkedList<Edge>();
     public static double distance(Vertex v1, Vertex v2) {
         int t1 = v1.ui_x-v2.ui_x;
@@ -94,6 +95,9 @@ public class Graph {
         return enumAns.toString();
     }
 
+    public static void clearSelection() {
+        for (Vertex v:vertices) v.selected = false;
+    }
 
 
 }
