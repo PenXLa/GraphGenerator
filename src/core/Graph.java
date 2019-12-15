@@ -42,40 +42,57 @@ public class Graph {
     }
 
     private static void enum_dfs(Vertex v, int method) {
-        if (v==null) return;
         Vertex v1 = null;
         Vertex v2 = null;
-        for (Edge e : edges) {
-            if (e.vs==v) {
-                if (v1==null) v1 = e.ve;//第一次检查到子节点
-                else {
-                    //第二次检查到子节点，根据x值判断是左节点还是右节点
-                    if (e.ve.ui_x<v1.ui_x) {
-                        v2 = v1;
-                        v1 = e.ve;
-                    } else {
-                        v2 = e.ve;
+        if (v!=null) {
+            for (Edge e : edges) {
+                if (e.vs==v) {
+                    if (v1==null) v1 = e.ve;//第一次检查到子节点
+                    else {
+                        //第二次检查到子节点，根据x值判断是左节点还是右节点
+                        if (e.ve.ui_x<v1.ui_x) {
+                            v2 = v1;
+                            v1 = e.ve;
+                        } else {
+                            v2 = e.ve;
+                        }
+                        break;
                     }
-                    break;
                 }
             }
         }
 
+
         switch (method){
             case 0:
-                enumAns.append(v.inx+" ");
-                enum_dfs(v1, method);
-                enum_dfs(v2, method);
+                if (v!=null) {
+                    enumAns.append(v.inx+" ");
+                    enum_dfs(v1, method);
+                    enum_dfs(v2, method);
+                }
                 break;
             case 1:
-                enum_dfs(v1, method);
-                enumAns.append(v.inx+" ");
-                enum_dfs(v2, method);
+                if (v==null)
+                    enumAns.append("^ ");
+                else {
+                    enumAns.append(v.inx + " ");
+                    enum_dfs(v1, method);
+                    enum_dfs(v2, method);
+                }
                 break;
             case 2:
-                enum_dfs(v1, method);
-                enum_dfs(v2, method);
-                enumAns.append(v.inx+" ");
+                if (v!=null) {
+                    enum_dfs(v1, method);
+                    enumAns.append(v.inx+" ");
+                    enum_dfs(v2, method);
+                }
+                break;
+            case 3:
+                if (v!=null) {
+                    enum_dfs(v1, method);
+                    enum_dfs(v2, method);
+                    enumAns.append(v.inx+" ");
+                }
                 break;
         }
     }

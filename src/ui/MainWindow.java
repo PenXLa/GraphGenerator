@@ -39,6 +39,7 @@ public class MainWindow extends JFrame {
         dataStyle.addItem("DFS");
         dataStyle.addItem("BFS");
         dataStyle.addItem("(二叉树)先序遍历");
+        dataStyle.addItem("(二叉树)先序遍历(带空子节点)");
         dataStyle.addItem("(二叉树)中序遍历");
         dataStyle.addItem("(二叉树)后序遍历");
         toolbox.add(dataStyle);
@@ -56,9 +57,9 @@ public class MainWindow extends JFrame {
                 } else {
                     int root = Integer.parseInt(JOptionPane.showInputDialog(null, "输入根节点", (Graph.selected!=null && Graph.selected instanceof Vertex)?((Vertex)Graph.selected).inx+"":""));
 
-                    if (dataStyle.getSelectedIndex()==1) {
+                    if (dataStyle.getSelectedIndex()==2) {
                         res = "暂不支持(主要是懒";
-                    } else if (dataStyle.getSelectedIndex()==2) {
+                    } else if (dataStyle.getSelectedIndex()==3) {
                         res = Graph.BFS(root);
                     } else {
                         res = Graph.binaryEnumGraph(root, dataStyle.getSelectedIndex()-4);
