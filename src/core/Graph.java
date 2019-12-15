@@ -38,7 +38,9 @@ public class Graph {
     //method=0表示先序，=1表示中序，=2表示后序
     private static StringBuffer enumAns;
     public static String binaryEnumGraph(int root, int method) {
-        enumAns = new StringBuffer(vertices.size() + "\n");
+        if(method!=1)enumAns = new StringBuffer(vertices.size() + "\n");//带空子节点的方式不用加节点数
+        else enumAns = new StringBuffer();
+
         Vertex rt = null;
         for (Vertex v : vertices) if (v.inx == root) {rt = v;break;}
         enum_dfs(rt, method);
