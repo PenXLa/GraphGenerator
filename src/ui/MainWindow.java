@@ -175,14 +175,14 @@ public class MainWindow extends JFrame {
 
         final double mouseRadius = 10;//边离鼠标距离为2时就算选中
         for (Edge e:Graph.edges) {
-            double len=Graph.distance(e.vs, e.ve);
+            double len=Graph.distance(e.vs, e.ve), dve = Graph.distance(e.ve, x, y), dvs = Graph.distance(e.vs, x, y);
             double vector1x = e.vs.ui_x - x;
             double vector1y = e.vs.ui_y - y;
             double vector2x = e.ve.ui_x - x;
             double vector2y = e.ve.ui_y - y;
 
-            double dis = (Math.abs(vector1x*vector2y - vector2x*vector1y))/len;
-            if (dis <= mouseRadius) return e;
+            double dis = (Math.abs(vector1x*vector2y - vector2x*vector1y))/len;//利用三角形面积算出垂线长度
+            if (dis <= mouseRadius && dvs <= len && dve <= len) return e;//如果点离线段的距离小于规定半径，并且距离线段两端的距离均小于len
 
         }
         return null;

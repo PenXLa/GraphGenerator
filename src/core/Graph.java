@@ -19,6 +19,11 @@ public class Graph {
         int t2 = v1.ui_y-v2.ui_y;
         return Math.sqrt(t1*t1+t2*t2);
     }
+    public static double distance(Vertex v, int x, int y) {
+        int t1 = v.ui_x-x;
+        int t2 = v.ui_y-y;
+        return Math.sqrt(t1*t1+t2*t2);
+    }
 
 
     public static String generateGraph(boolean weighted) {
