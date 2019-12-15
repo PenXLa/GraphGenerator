@@ -47,13 +47,17 @@ public class Graph {
         if (v!=null) {
             for (Edge e : edges) {
                 if (e.vs==v) {
-                    if (v1==null) v1 = e.ve;//第一次检查到子节点
+                    if (v1==null && v2==null)//第一次检查到子节点
+                        if (e.ve.ui_x < e.vs.ui_x) v1 = e.ve;//如果在父节点左边，算左儿子，否则算右儿子
+                        else v2 = e.ve;
                     else {
+                        Vertex vv = v1==null?v2.clone():v1.clone();//有值的那一个节点
                         //第二次检查到子节点，根据x值判断是左节点还是右节点
-                        if (e.ve.ui_x<v1.ui_x) {
-                            v2 = v1;
+                        if (e.ve.ui_x<vv.ui_x) {
+                            v2 = vv;
                             v1 = e.ve;
                         } else {
+                            v1 = vv;
                             v2 = e.ve;
                         }
                         break;
